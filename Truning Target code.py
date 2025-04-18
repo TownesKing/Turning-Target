@@ -9,6 +9,12 @@ outPin3 = 16
 outPin4 = 17
 outPin5 = 18
 
+inPin1 = 19
+inPin2 = 20
+inPin3 = 21
+inPin4 = 22
+inPin5 = 23
+
 GPIO.setmode(GPIO.BCM)
 
 GPIO.setup(outPin1, GPIO.OUT)
@@ -16,6 +22,13 @@ GPIO.setup(outPin2, GPIO.OUT)
 GPIO.setup(outPin3, GPIO.OUT)
 GPIO.setup(outPin4, GPIO.OUT)
 GPIO.setup(outPin5, GPIO.OUT)
+
+GPIO.setup(inPin1, GPIO.IN)
+GPIO.setup(inPin2, GPIO.IN)
+GPIO.setup(inPin3, GPIO.IN)
+GPIO.setup(inPin4, GPIO.IN)
+GPIO.setup(inPin5, GPIO.IN)
+
 
 def encode(num):
     if (num < 32):
@@ -42,6 +55,17 @@ def encode(num):
         GPIO.output (outPin4, GPIO.LOW)
         GPIO.output (outPin5, GPIO.LOW)
 
-def decomde():
+def decode():
+    num = 0
+    if GPIO.input (inPin1) == GPIO.LOW:
+        num += 1
+    if GPIO.input (inPin2) == GPIO.LOW:
+        num += 2
+    if GPIO.input (inPin3) == GPIO.LOW:
+        num += 4
+    if GPIO.input (inPin4) == GPIO.LOW:
+        num += 8
+    if GPIO.input (inPin5) == GPIO.LOW:
+        num += 16
     
-        
+    return(num)

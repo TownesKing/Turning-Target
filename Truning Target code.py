@@ -1,5 +1,8 @@
 import time
 import RPi.GPIO as GPIO
+import vlc as vlc
+
+FileDirectory = "c/Desktop/Audio/files" #make sure to update
 
 clockOut = 10
 
@@ -29,6 +32,7 @@ GPIO.setup(inPin3, GPIO.IN)
 GPIO.setup(inPin4, GPIO.IN)
 GPIO.setup(inPin5, GPIO.IN)
 
+Media_Player = vlc.MediaPlayer()
 
 def encode(num):
     if (num < 32):
@@ -57,6 +61,7 @@ def encode(num):
 
 def decode():
     num = 0
+    
     if GPIO.input (inPin1) == GPIO.LOW:
         num += 1
     if GPIO.input (inPin2) == GPIO.LOW:
@@ -69,3 +74,12 @@ def decode():
         num += 16
     
     return(num)
+
+def play(name):
+    Media = vlc.MediaPlayer(FileDirectory + name + ".mp3")
+    Media_Player.set_media(Media)
+    Media_Player.play()
+
+def audioUpdate():
+    if Media_Player.get_time() == Media_Player.get_length():
+        Media_Player.stop()

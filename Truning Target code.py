@@ -4,6 +4,13 @@ import vlc as vlc
 
 FileDirectory = "c/Desktop/Audio/files" #make sure to update
 
+#pin allication for specific features
+PinQuit = 1
+PinRestart = 2
+PinPause = 3
+PinSkip = 4
+PinNMC = 5
+
 clockOut = 10
 
 outPin1 = 14
@@ -31,6 +38,31 @@ GPIO.setup(inPin2, GPIO.IN)
 GPIO.setup(inPin3, GPIO.IN)
 GPIO.setup(inPin4, GPIO.IN)
 GPIO.setup(inPin5, GPIO.IN)
+
+#  STATE # | name
+#  0       | Start
+#  1       | 3 minute prep
+#  2       | NMC slow
+#  3       | Cold range
+#  4       | NMC Timed 1
+#  5       | NMC Timed 2
+#  6       | Timed Aliby string
+#  7       | Cold Range Timed
+#  8       | NMC Rapid 1
+#  9       | NMC Rapid 2
+#  10      | Rapid Aliby string
+#  11      | Cold Range Rapid
+#  12      | 
+#  13      | 
+#  14      | 
+#  15      | 
+#  16      | 
+#  
+
+audioPlayed = True
+# O is none, 1 is move onto next, 2 is aliby
+switchSate = 0
+state = 0
 
 Media_Player = vlc.MediaPlayer()
 
@@ -75,11 +107,51 @@ def decode():
     
     return(num)
 
+def enterprete():
+    num = decode()
+    if num == PinQuit:
+        return 1
+    elif num == PinSkip:
+        return 2
+    else:
+        return 0
+
 def play(name):
     Media = vlc.MediaPlayer(FileDirectory + name + ".mp3")
     Media_Player.set_media(Media)
     Media_Player.play()
 
-def audioUpdate():
-    if Media_Player.get_time() == Media_Player.get_length():
+def audioUpdate(num):
+    if(num == 1):
+        if Media_Player.get_time() == Media_Player.get_length():
+            Media_Player.stop()
+            audioPlayed = True
+    if (num == 2):
         Media_Player.stop()
+        
+
+def State3MinutePrep():
+    audioUpdate(1)
+
+    if audioPlayed == True & switchSate == 0:
+        play("3MinPrep")
+        switchSate = 1
+        audioPlayed = False
+    if audioPlayed == True & switchSate == 1:
+        play("Is everyone ready")
+        switchSate == 2
+        audioPlayed = False
+    if audioPlayed == True & switchSate == 2:
+        state = 2
+        switchSate = 0
+        audioPlayed = False
+
+while True:
+
+    buton = enterprete()
+    audioUpdate(1)
+
+    #button inputs
+    if buton > 0:
+        if buton == PinQuit:
+            break

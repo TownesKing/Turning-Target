@@ -131,8 +131,6 @@ def audioUpdate(num):
         
 
 def State3MinutePrep():
-    audioUpdate(1)
-
     if audioPlayed == True & switchSate == 0:
         play("3MinPrep")
         switchSate = 1
@@ -146,6 +144,10 @@ def State3MinutePrep():
         switchSate = 0
         audioPlayed = False
 
+def StateNMCSlow():
+    if audioPlayed == True & switchSate == 1:
+        play("NMCSlow")
+
 while True:
 
     buton = enterprete()
@@ -155,3 +157,7 @@ while True:
     if buton > 0:
         if buton == PinQuit:
             break
+
+    #states
+    if state == 1:
+        State3MinutePrep

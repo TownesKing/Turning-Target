@@ -68,10 +68,19 @@ state = 0
 
 Media_Player = vlc.MediaPlayer()
 
+#Intakes an integer and turns it into a signal that is encoded into binary, with PCB it swiches the state untill power is turned off to the board
 def encode(num):
     if (num < 32):
-        binary = bin(num)[2:].zfill(5)
+        binary = bin(num)[2:].zfill(5) #Convert the number to a binary number from an integer
 
+        GPIO.output (outPin1, GPIO.LOW)
+        GPIO.output (outPin2, GPIO.LOW)
+        GPIO.output (outPin3, GPIO.LOW)
+        GPIO.output (outPin4, GPIO.LOW)
+        GPIO.output (outPin5, GPIO.LOW)
+
+        #Basically this takes the binary number cuts of the first two bits that indicate the number is in binar, now thier is just the up to 5 bits, 
+        #We then mask this with the & oporation with one of each bit prepared in the same way, if the output of the mask is positive then a bit exists their, we also use zfill to add in 0's if the number is too short.
         if (bin & bin(1)[2:].zfill(5)) == bin(1)[2:].zfill(5):
             GPIO.output (outPin1, GPIO.HIGH)
         if (bin & bin(2)[2:].zfill(5)) == bin(2)[2:].zfill(5):
@@ -83,9 +92,10 @@ def encode(num):
         if (bin & bin(16)[2:].zfill(5)) == bin(16)[2:].zfill(5):
             GPIO.output (outPin5, GPIO.HIGH)
 
-        time.sleep(0.1)
+        #To write data we need to flash the clock signal to tell everythin to update so we wait 1/1000 of a second to let all the pins turn all the way on, then we flash the clock for another 1/1000 of a second, so the cycle the clock it takes 1/500 of a second
+        time.sleep(0.001)
         GPIO.output (clockOut, GPIO.HIGH)
-        time.sleep(0.1)
+        time.sleep(0.001)
         GPIO.output (clockOut, GPIO.LOW)
         GPIO.output (outPin1, GPIO.LOW)
         GPIO.output (outPin2, GPIO.LOW)
@@ -93,6 +103,7 @@ def encode(num):
         GPIO.output (outPin4, GPIO.LOW)
         GPIO.output (outPin5, GPIO.LOW)
 
+#outputs a integer based on what pins are sending data into the input pins listed by inPin variables, this is based on the PCB it is atached to for sending active low signals.
 def decode():
     num = 0
     
@@ -109,24 +120,23 @@ def decode():
     
     return(num)
 
+#Reads the input pins and retunrs a number based on what is input, this should only be used for complex fuctions, try to use decode more.
 def enterprete():
     num = decode()
     if num == PinQuit:
         return 1
     elif num == PinSkip:
         return 2
-    elif num == PinYes:
-        return 3
-    elif num == PinNo:
-        return 4
     else:
         return 0
 
+#Plays an audio file with the name input that is in the folder named in FileDirectory variable
 def play(name):
     Media = vlc.MediaPlayer(FileDirectory + name + ".mp3")
     Media_Player.set_media(Media)
     Media_Player.play()
 
+#This Function checks the current audio file and closes the application of it is over with a 1 or if 2 is imput then we just close it no questions asked
 def audioUpdate(num):
     if(num == 1):
         if Media_Player.get_time() == Media_Player.get_length():
@@ -135,7 +145,7 @@ def audioUpdate(num):
     if (num == 2):
         Media_Player.stop()
         
-
+#3 Minute prep period
 def State3MinutePrep(state, switchSate, audioPlayed):
     if audioPlayed == True & switchSate == 0:
         play("3MinPrep")
@@ -146,26 +156,66 @@ def State3MinutePrep(state, switchSate, audioPlayed):
         switchSate == 2
         audioPlayed = False
     if audioPlayed == True & switchSate == 2:
+        play("PlaceSlowTarget")
         state = 2
         switchSate = 0
         audioPlayed = False
 
+#Slow with a is line ready
 def StateNMCSlow(state, switchSate, audioPlayed):
     if audioPlayed == True & switchSate == 0:
         play("NMCSlowPrepToReady") #From anouncement to asking if ready
         switchSate = 1
         audioPlayed = False
-    if switchSate == 2:
-        if enterprete() == 3:
+    if switchSate == 1:
+        if decode() == PinYes:
+            switchSate = 2
+        if decode() == PinNo:
             switchSate = 3
-        if enterprete() == 4:
-            switchSate = 4
-    if audioPlayed == True & switchSate == 3:
+    if audioPlayed == True & switchSate == 2:
         play("NMCSlowIsReady")
-        state = 3
-        switchSate = 0
+        switchSate = 4
+        audioPlayed = False
+    if audioPlayed == True & switchSate == 3:
+        play("NotReadyIsReady") # Line is not ready give 1 more minute then ask again
+        switchSate = 1
         audioPlayed = False
     if audioPlayed == True & switchSate == 4:
+        play("RetraveAndReplaceTargetsSlow")
+        switchSate = 0
+        state = 3
+        audioPlayed = False
+
+def StateNMCTimed(state, switchSate, audioPlayed):
+    if audioPlayed == True & switchSate == 0:
+            play("NMCTimedPrepToReady") #From anouncement to asking if ready
+            switchSate = 1
+            audioPlayed = False
+    if switchSate == 1:
+        if decode() == PinYes:
+            switchSate = 2
+        if decode() == PinNo:
+            switchSate = 3
+    if audioPlayed == True & switchSate == 2:
+        play("NMCTimedIsReadyAndString1")
+        switchSate = 4
+        audioPlayed = False
+    if audioPlayed == True & switchSate == 3:
+        play("NotReadyIsReady") # Line is not ready give 1 more minute then ask again
+        switchSate = 1
+        audioPlayed = False
+
+    if switchSate == 5:
+        if decode() == PinYes:
+            switchSate = 5
+        if decode() == PinNo:
+            switchSate = 6
+    if audioPlayed == True & switchSate == 6:
+        play("NMCTimedIsReadyAndString2")
+        state = 4
+        switchSate = 0
+        audioPlayed = False
+    if audioPlayed == True & switchSate == 7:
         play("NotReadyIsReady") # Line is not ready give 1 more minute then ask again
         switchSate = 1
         audioPlayed = False
@@ -185,3 +235,5 @@ while True:
         State3MinutePrep(state, switchSate, audioPlayed)
     if state == 2:
         StateNMCSlow(state, switchSate, audioPlayed)
+    if state == 3:
+        StateNMCTimed(state, switchSate, audioPlayed)

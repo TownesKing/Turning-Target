@@ -10,6 +10,8 @@ PinRestart = 2
 PinPause = 3
 PinSkip = 4
 PinNMC = 5
+PinYes = 6
+PinNo = 7
 
 clockOut = 10
 
@@ -113,6 +115,10 @@ def enterprete():
         return 1
     elif num == PinSkip:
         return 2
+    elif num == PinYes:
+        return 3
+    elif num == PinNo:
+        return 4
     else:
         return 0
 
@@ -130,7 +136,7 @@ def audioUpdate(num):
         Media_Player.stop()
         
 
-def State3MinutePrep():
+def State3MinutePrep(state, switchSate, audioPlayed):
     if audioPlayed == True & switchSate == 0:
         play("3MinPrep")
         switchSate = 1
@@ -144,9 +150,25 @@ def State3MinutePrep():
         switchSate = 0
         audioPlayed = False
 
-def StateNMCSlow():
-    if audioPlayed == True & switchSate == 1:
-        play("NMCSlow")
+def StateNMCSlow(state, switchSate, audioPlayed):
+    if audioPlayed == True & switchSate == 0:
+        play("NMCSlowPrepToReady") #From anouncement to asking if ready
+        switchSate = 1
+        audioPlayed = False
+    if switchSate == 2:
+        if enterprete() == 3:
+            switchSate = 3
+        if enterprete() == 4:
+            switchSate = 4
+    if audioPlayed == True & switchSate == 3:
+        play("NMCSlowIsReady")
+        state = 3
+        switchSate = 0
+        audioPlayed = False
+    if audioPlayed == True & switchSate == 4:
+        play("NotReadyIsReady") # Line is not ready give 1 more minute then ask again
+        switchSate = 1
+        audioPlayed = False
 
 while True:
 
@@ -160,4 +182,6 @@ while True:
 
     #states
     if state == 1:
-        State3MinutePrep
+        State3MinutePrep(state, switchSate, audioPlayed)
+    if state == 2:
+        StateNMCSlow(state, switchSate, audioPlayed)

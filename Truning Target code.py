@@ -45,15 +45,15 @@ GPIO.setup(inPin5, GPIO.IN)
 #  0       | Start
 #  1       | 3 minute prep
 #  2       | NMC slow
-#  3       | Cold range
-#  4       | NMC Timed 1
-#  5       | NMC Timed 2
-#  6       | Timed Aliby string
-#  7       | Cold Range Timed
-#  8       | NMC Rapid 1
-#  9       | NMC Rapid 2
-#  10      | Rapid Aliby string
-#  11      | Cold Range Rapid
+#  3       | NMC Timed
+#  4       | 
+#  5       | 
+#  6       | 
+#  7       | 
+#  8       | 
+#  9       | 
+#  10      | 
+#  11      | 
 #  12      | 
 #  13      | 
 #  14      | 
@@ -162,7 +162,13 @@ def State3MinutePrep(state, switchSate, audioPlayed):
         audioPlayed = False
 
 #Slow with a is line ready
-def StateNMCSlow(state, switchSate, audioPlayed):
+def StateNMCSlow():
+    global state
+    global switchSate
+    global audioPlayed
+    if switchSate == 2:
+        if decode() == PinSkip:
+            audioUpdate(2)
     if audioPlayed == True & switchSate == 0:
         play("NMCSlowPrepToReady") #From anouncement to asking if ready
         switchSate = 1
@@ -181,12 +187,16 @@ def StateNMCSlow(state, switchSate, audioPlayed):
         switchSate = 1
         audioPlayed = False
     if audioPlayed == True & switchSate == 4:
-        play("RetraveAndReplaceTargetsSlow")
+        play("RetraveAndReplaceTargesTimed")
         switchSate = 0
         state = 3
         audioPlayed = False
 
-def StateNMCTimed(state, switchSate, audioPlayed):
+#Timed Fire
+def StateNMCTimed():
+    global state
+    global switchSate
+    global audioPlayed
     if audioPlayed == True & switchSate == 0:
             play("NMCTimedPrepToReady") #From anouncement to asking if ready
             switchSate = 1
@@ -204,25 +214,76 @@ def StateNMCTimed(state, switchSate, audioPlayed):
         play("NotReadyIsReady") # Line is not ready give 1 more minute then ask again
         switchSate = 1
         audioPlayed = False
-
+    if audioPlayed == True & switchSate == 4:
+        play("TimedString2")
+        switchSate = 5
+        audioPlayed = False
     if switchSate == 5:
         if decode() == PinYes:
-            switchSate = 5
-        if decode() == PinNo:
             switchSate = 6
+        if decode() == PinNo:
+            switchSate = 7
     if audioPlayed == True & switchSate == 6:
         play("NMCTimedIsReadyAndString2")
-        state = 4
-        switchSate = 0
+        switchSate = 8
         audioPlayed = False
     if audioPlayed == True & switchSate == 7:
         play("NotReadyIsReady") # Line is not ready give 1 more minute then ask again
         switchSate = 1
         audioPlayed = False
+    if audioPlayed == True & switchSate == 8:
+        play("RetreaveAndReplaceRapid")
+        switchSate = 0
+        audioPlayed = False
+        state = 4
+
+#Timed Fire
+def StateNMCRapid():
+    global state
+    global switchSate
+    global audioPlayed
+    if audioPlayed == True & switchSate == 0:
+            play("NMCRapidPrepToReady") #From anouncement to asking if ready
+            switchSate = 1
+            audioPlayed = False
+    if switchSate == 1:
+        if decode() == PinYes:
+            switchSate = 2
+        if decode() == PinNo:
+            switchSate = 3
+    if audioPlayed == True & switchSate == 2:
+        play("NMCRapidIsReadyAndString1")
+        switchSate = 4
+        audioPlayed = False
+    if audioPlayed == True & switchSate == 3:
+        play("NotReadyIsReady") # Line is not ready give 1 more minute then ask again
+        switchSate = 1
+        audioPlayed = False
+    if audioPlayed == True & switchSate == 4:
+        play("RapidString2")
+        switchSate = 5
+        audioPlayed = False
+    if switchSate == 5:
+        if decode() == PinYes:
+            switchSate = 6
+        if decode() == PinNo:
+            switchSate = 7
+    if audioPlayed == True & switchSate == 6:
+        play("NMCRapidIsReadyAndString2")
+        switchSate = 8
+        audioPlayed = False
+    if audioPlayed == True & switchSate == 7:
+        play("NotReadyIsReady") # Line is not ready give 1 more minute then ask again
+        switchSate = 1
+        audioPlayed = False
+    if audioPlayed == True & switchSate == 8:
+        play("RetreaveTargetsConcludeMatch")
+        switchSate = 0
+        audioPlayed = False
 
 while True:
 
-    buton = enterprete()
+    buton = decode()
     audioUpdate(1)
 
     #button inputs
@@ -232,8 +293,10 @@ while True:
 
     #states
     if state == 1:
-        State3MinutePrep(state, switchSate, audioPlayed)
+        State3MinutePrep
     if state == 2:
-        StateNMCSlow(state, switchSate, audioPlayed)
+        StateNMCSlow
     if state == 3:
-        StateNMCTimed(state, switchSate, audioPlayed)
+        StateNMCTimed
+    if state == 4:
+        StateNMCRapid

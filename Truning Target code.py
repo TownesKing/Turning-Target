@@ -65,6 +65,7 @@ audioPlayed = True
 # O is none, 1 is move onto next, 2 is aliby
 switchSate = 0
 state = 0
+Aliby = False
 
 Media_Player = vlc.MediaPlayer()
 
@@ -197,6 +198,7 @@ def StateNMCTimed():
     global state
     global switchSate
     global audioPlayed
+    global Aliby
     if audioPlayed == True & switchSate == 0:
             play("NMCTimedPrepToReady") #From anouncement to asking if ready
             switchSate = 1
@@ -214,34 +216,81 @@ def StateNMCTimed():
         play("NotReadyIsReady") # Line is not ready give 1 more minute then ask again
         switchSate = 1
         audioPlayed = False
-    if audioPlayed == True & switchSate == 4:
-        play("TimedString2")
-        switchSate = 5
-        audioPlayed = False
-    if switchSate == 5:
+    if switchSate == 4:
+        if audioPlayed == True:
+            play("Aliby?")
+            audioPlayed = False
         if decode() == PinYes:
-            switchSate = 6
-        if decode() == PinNo:
-            switchSate = 7
-    if audioPlayed == True & switchSate == 6:
-        play("NMCTimedIsReadyAndString2")
-        switchSate = 8
+            audioUpdate(2)
+            play("TheirIsAnAliby")
+            Aliby = True
+            audioPlayed = False
+            switchSate = 5
+        if decode() == False:
+            audioUpdate(2)
+            switchSate = 5
+    if audioPlayed == True & switchSate == 5:
+        play("TimedString2")
+        switchSate = 6
         audioPlayed = False
-    if audioPlayed == True & switchSate == 7:
+    if switchSate == 6:
+        if decode() == PinYes:
+            switchSate = 8
+        if decode() == PinNo:
+            switchSate = 9
+    if audioPlayed == True & switchSate == 8:
+        play("NMCTimedIsReadyAndString2")
+        switchSate = 10
+        audioPlayed = False
+    if audioPlayed == True & switchSate == 9:
         play("NotReadyIsReady") # Line is not ready give 1 more minute then ask again
         switchSate = 1
         audioPlayed = False
-    if audioPlayed == True & switchSate == 8:
-        play("RetreaveAndReplaceRapid")
+    if switchSate == 10:
+        if audioPlayed == True:
+            play("Aliby?")
+            audioPlayed = False
+        if decode() == PinYes:
+            audioUpdate(2)
+            play("TheirIsAnAliby")
+            Aliby = True
+            audioPlayed = False
+            switchSate = 11
+        if decode() == False:
+            audioUpdate(2)
+            switchSate = 11
+    if switchSate == 11:
+        if Aliby == True:
+            if audioPlayed == True:
+                play("AlibyStringNowToReady")
+                audioPlayed = False
+                switchSate = 13
+        if Aliby == False:
+            switchSate = 12
+    if audioPlayed == True & switchSate == 12:
+        play("RetreaveTargetsConcludeMatch")
         switchSate = 0
         audioPlayed = False
-        state = 4
+    if switchSate == 13:
+        if decode() == PinYes:
+            switchSate = 14
+        if decode() == PinNo:
+            switchSate = 15
+    if audioPlayed == True & switchSate == 14:
+        play("NMCTimedIsReadyAndAlibyString")
+        audioPlayed = False
+        switchSate = 12
+    if audioPlayed == True & switchSate == 15:
+        play("NotReadyIsReady")
+        switchSate = 13
+        audioPlayed == True
 
-#Timed Fire
+#Rapid Fire
 def StateNMCRapid():
     global state
     global switchSate
     global audioPlayed
+    global Aliby
     if audioPlayed == True & switchSate == 0:
             play("NMCRapidPrepToReady") #From anouncement to asking if ready
             switchSate = 1
@@ -259,27 +308,74 @@ def StateNMCRapid():
         play("NotReadyIsReady") # Line is not ready give 1 more minute then ask again
         switchSate = 1
         audioPlayed = False
-    if audioPlayed == True & switchSate == 4:
-        play("RapidString2")
-        switchSate = 5
-        audioPlayed = False
-    if switchSate == 5:
+    if switchSate == 4:
+        if audioPlayed == True:
+            play("Aliby?")
+            audioPlayed = False
         if decode() == PinYes:
-            switchSate = 6
-        if decode() == PinNo:
-            switchSate = 7
-    if audioPlayed == True & switchSate == 6:
-        play("NMCRapidIsReadyAndString2")
-        switchSate = 8
+            audioUpdate(2)
+            play("TheirIsAnAliby")
+            Aliby = True
+            audioPlayed = False
+            switchSate = 5
+        if decode() == False:
+            audioUpdate(2)
+            switchSate = 5
+    if audioPlayed == True & switchSate == 5:
+        play("RapidString2")
+        switchSate = 6
         audioPlayed = False
-    if audioPlayed == True & switchSate == 7:
+    if switchSate == 6:
+        if decode() == PinYes:
+            switchSate = 8
+        if decode() == PinNo:
+            switchSate = 9
+    if audioPlayed == True & switchSate == 8:
+        play("NMCRapidIsReadyAndString2")
+        switchSate = 10
+        audioPlayed = False
+    if audioPlayed == True & switchSate == 9:
         play("NotReadyIsReady") # Line is not ready give 1 more minute then ask again
         switchSate = 1
         audioPlayed = False
-    if audioPlayed == True & switchSate == 8:
+    if switchSate == 10:
+        if audioPlayed == True:
+            play("Aliby?")
+            audioPlayed = False
+        if decode() == PinYes:
+            audioUpdate(2)
+            play("TheirIsAnAliby")
+            Aliby = True
+            audioPlayed = False
+            switchSate = 11
+        if decode() == False:
+            audioUpdate(2)
+            switchSate = 11
+    if switchSate == 11:
+        if Aliby == True:
+            if audioPlayed == True:
+                play("AlibyStringNowToReady")
+                audioPlayed = False
+                switchSate = 13
+        if Aliby == False:
+            switchSate = 12
+    if audioPlayed == True & switchSate == 12:
         play("RetreaveTargetsConcludeMatch")
         switchSate = 0
         audioPlayed = False
+    if switchSate == 13:
+        if decode() == PinYes:
+            switchSate = 14
+        if decode() == PinNo:
+            switchSate = 15
+    if audioPlayed == True & switchSate == 14:
+        play("NMCRapidIsReadyAndAlibyString")
+        audioPlayed = False
+        switchSate = 12
+    if audioPlayed == True & switchSate == 15:
+        play("NotReadyIsReady")
+        switchSate = 13
+        audioPlayed == True
 
 while True:
 

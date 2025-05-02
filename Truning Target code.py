@@ -2,7 +2,7 @@ import time
 import RPi.GPIO as GPIO
 import vlc as vlc
 
-FileDirectory = "c/Desktop/Audio/files" #make sure to update
+FileDirectory = "C/Desktop/Audio/files" #make sure to update
 
 # Audio file names
 # 3MinPrep
@@ -13,6 +13,20 @@ FileDirectory = "c/Desktop/Audio/files" #make sure to update
 # NotReadyIsReady
 # RetreaveAndReplaceTargetsTimed
 # NMCTimedPrepToReady
+# NMCTimedIsReadyAndString1
+# Alibi?
+# TheirIsAnAliby
+# TimedString2Ready
+# NMCTimedIsReadyAndString2
+# AlibiStringNowToReady
+# RetreaveTargetsConcludeMatch
+# NMCTimedIsReadyAndAlbiString
+# NMCRapidPrepToReady
+# NMCRapidIsReadyAndString1
+# RapidString2Ready
+# NMCRapidIsReadyAndString2
+# NMCRapidIsReadyAndAlibiString
+# RetreaveAndReplaceTargetsRapid
 
 #pin allication for specific features
 PinQuit = 1
@@ -227,7 +241,7 @@ def StateNMCTimed():
             audioUpdate(2)
             switchSate = 5
     if audioPlayed == True & switchSate == 5:
-        play("TimedString2")
+        play("TimedString2Ready")
         switchSate = 6
         audioPlayed = False
     if switchSate == 6:
@@ -265,7 +279,7 @@ def StateNMCTimed():
         if Alibi == False:
             switchSate = 12
     if audioPlayed == True & switchSate == 12:
-        play("RetreaveTargetsConcludeMatch")
+        play("RetreaveAndReplaceTargetsRapid")
         switchSate = 0
         audioPlayed = False
     if switchSate == 13:
@@ -319,7 +333,7 @@ def StateNMCRapid():
             audioUpdate(2)
             switchSate = 5
     if audioPlayed == True & switchSate == 5:
-        play("RapidString2")
+        play("RapidString2Ready")
         switchSate = 6
         audioPlayed = False
     if switchSate == 6:

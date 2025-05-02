@@ -4,29 +4,29 @@ import vlc as vlc
 
 FileDirectory = "C/Desktop/Audio/files" #make sure to update
 
-# Audio file names
-# 3MinPrep
-# IsLineReady
+# Audio file names, make sure each sarts with the proper length of pause between commands
+### 3MinPrep
+# IsLineCold
 # PlaceSlowTarget
-# NMCSlowPrepToReady
-# NMCSlowIsReady
+### NMCSlowPrepToReady
+### NMCSlowIsReady
 # NotReadyIsReady
-# RetreaveAndReplaceTargetsTimed
-# NMCTimedPrepToReady
-# NMCTimedIsReadyAndString1
+### RetreaveAndReplaceTargetsTimed
+### NMCTimedPrepToReady
+### NMCTimedIsReadyAndString1
 # Alibi?
 # TheirIsAnAliby
-# TimedString2Ready
-# NMCTimedIsReadyAndString2
+### NMCTimedString2Ready
+### NMCTimedIsReadyAndString2
 # AlibiStringNowToReady
 # RetreaveTargetsConcludeMatch
-# NMCTimedIsReadyAndAlbiString
-# NMCRapidPrepToReady
-# NMCRapidIsReadyAndString1
+### NMCTimedIsReadyAndAlbiString
+### NMCRapidPrepToReady
+### NMCRapidIsReadyAndString1
 # RapidString2Ready
-# NMCRapidIsReadyAndString2
-# NMCRapidIsReadyAndAlibiString
-# RetreaveAndReplaceTargetsRapid
+### NMCRapidIsReadyAndString2
+### NMCRapidIsReadyAndAlibiString
+### RetreaveAndReplaceTargetsRapid
 
 #pin allication for specific features
 PinQuit = 1
@@ -164,7 +164,7 @@ def State3MinutePrep(state, switchSate, audioPlayed):
         switchSate = 1
         audioPlayed = False
     if audioPlayed == True & switchSate == 1:
-        play("IsLineReady")
+        play("IsLineCold")
         switchSate == 2
         audioPlayed = False
     if audioPlayed == True & switchSate == 2:
@@ -241,7 +241,7 @@ def StateNMCTimed():
             audioUpdate(2)
             switchSate = 5
     if audioPlayed == True & switchSate == 5:
-        play("TimedString2Ready")
+        play("NMCTimedString2Ready")
         switchSate = 6
         audioPlayed = False
     if switchSate == 6:

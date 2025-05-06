@@ -6,27 +6,30 @@ FileDirectory = "C/Desktop/Audio/files" #make sure to update
 
 # Audio file names, make sure each sarts with the proper length of pause between commands
 ### 3MinPrep
-# IsLineCold
-# PlaceSlowTarget
+## IsLineCold
+## PlaceSlowTarget
 ### NMCSlowPrepToReady
 ### NMCSlowIsReady
 # NotReadyIsReady
 ### RetreaveAndReplaceTargetsTimed
 ### NMCTimedPrepToReady
 ### NMCTimedIsReadyAndString1
-# Alibi?
-# TheirIsAnAliby
+## Alibi?
+## TheirIsAnAlibi
 ### NMCTimedString2Ready
 ### NMCTimedIsReadyAndString2
-# AlibiStringNowToReady
-# RetreaveTargetsConcludeMatch
+## AlibiStringNowToReady
+## RetreaveTargetsConcludeMatch
 ### NMCTimedIsReadyAndAlbiString
 ### NMCRapidPrepToReady
 ### NMCRapidIsReadyAndString1
-# RapidString2Ready
+## NMCRapidString2Ready
 ### NMCRapidIsReadyAndString2
 ### NMCRapidIsReadyAndAlibiString
 ### RetreaveAndReplaceTargetsRapid
+## AreTargetsPosted
+## NMCRapidAlibiReady
+## NMCTimedAlibiReady
 
 #pin allication for specific features
 PinQuit = 1
@@ -77,6 +80,7 @@ audioPlayed = True
 switchSate = 0
 state = 0
 Alibi = False
+NMC = True
 
 Media_Player = vlc.MediaPlayer()
 
@@ -169,9 +173,18 @@ def State3MinutePrep(state, switchSate, audioPlayed):
         audioPlayed = False
     if audioPlayed == True & switchSate == 2:
         play("PlaceSlowTarget")
-        state = 2
-        switchSate = 0
+        switchSate = 3
         audioPlayed = False
+    if audioPlayed == True & switchSate == 3:
+        play("AreTargetsPosted")
+        switchSate = 4
+        audioPlayed = False
+    if switchSate == 4:
+        if decode() == PinYes:
+            audioUpdate(2)
+            audioPlayed = True
+            switchSate = 0
+            state = 2
 
 #Slow with a is line ready
 def StateNMCSlow():
@@ -200,9 +213,18 @@ def StateNMCSlow():
         audioPlayed = False
     if audioPlayed == True & switchSate == 4:
         play("RetreaveAndReplaceTargesTimed")
-        switchSate = 0
-        state = 3
+        switchSate = 5
         audioPlayed = False
+    if audioPlayed == True & switchSate == 5:
+        play("AreTargetsPosted")
+        switchSate = 6
+        audioPlayed = False
+    if switchSate == 6:
+        if decode() == PinYes:
+            audioUpdate(2)
+            audioPlayed = True
+            switchSate = 0
+            state = 3
 
 #Timed Fire
 def StateNMCTimed():
@@ -273,14 +295,15 @@ def StateNMCTimed():
     if switchSate == 11:
         if Alibi == True:
             if audioPlayed == True:
-                play("AlibiStringNowToReady")
+                play("AlibiStringNow")
                 audioPlayed = False
-                switchSate = 13
+                switchSate = 16
+                Alibi = False
         if Alibi == False:
             switchSate = 12
     if audioPlayed == True & switchSate == 12:
         play("RetreaveAndReplaceTargetsRapid")
-        switchSate = 0
+        switchSate = 17
         audioPlayed = False
     if switchSate == 13:
         if decode() == PinYes:
@@ -295,6 +318,20 @@ def StateNMCTimed():
         play("NotReadyIsReady")
         switchSate = 13
         audioPlayed == True
+    if audioPlayed == True & switchSate == 16:
+        play("NMCTimedAlibiReady")
+        switchSate = 13
+        audioPlayed = True
+    if audioPlayed == True & switchSate == 17:
+        play("AreTargetsPosted")
+        switchSate = 18
+        audioPlayed = False
+    if switchSate == 18:
+        if decode() == PinYes:
+            audioUpdate(2)
+            audioPlayed = True
+            switchSate = 0
+            state = 4
 
 #Rapid Fire
 def StateNMCRapid():
@@ -333,7 +370,7 @@ def StateNMCRapid():
             audioUpdate(2)
             switchSate = 5
     if audioPlayed == True & switchSate == 5:
-        play("RapidString2Ready")
+        play("NMCRapidString2Ready")
         switchSate = 6
         audioPlayed = False
     if switchSate == 6:
@@ -365,9 +402,9 @@ def StateNMCRapid():
     if switchSate == 11:
         if Alibi == True:
             if audioPlayed == True:
-                play("AlibiStringNowToReady")
+                play("AlibiStringNow")
                 audioPlayed = False
-                switchSate = 13
+                switchSate = 16
         if Alibi == False:
             switchSate = 12
     if audioPlayed == True & switchSate == 12:
@@ -387,6 +424,10 @@ def StateNMCRapid():
         play("NotReadyIsReady")
         switchSate = 13
         audioPlayed == True
+    if audioPlayed == True & switchSate == 16:
+        play("NMCRapidAlibiReady")
+        switchSate = 13
+        audioPlayed = True
 
 while True:
 

@@ -55,6 +55,7 @@ inPin4 = 22
 inPin5 = 23
 
 GPIO.setmode(GPIO.BCM)
+GPIO.cleanup()
 
 GPIO.setup(outPin1, GPIO.OUT)
 GPIO.setup(outPin2, GPIO.OUT)
@@ -437,6 +438,7 @@ while True:
     #button inputs
     if buton > 0:
         if buton == PinQuit:
+            GPIO.cleanup()
             break
 
     #states

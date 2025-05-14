@@ -35,6 +35,7 @@ FileDirectory = "C/Desktop/Audio/files" #make sure to update
 PinQuit = 1
 PinRestart = 2
 PinPause = 3
+PinBack = 8
 PinSkip = 4
 PinNMC = 5
 PinYes = 6
@@ -51,11 +52,11 @@ outPin5 = 18
 inPin1 = 19
 inPin2 = 20
 inPin3 = 21
-inPin4 = 22
+inPin4 = 26
 inPin5 = 23
 
-GPIO.setmode(GPIO.BCM)
 GPIO.cleanup()
+GPIO.setmode(GPIO.BCM)
 
 GPIO.setup(outPin1, GPIO.OUT)
 GPIO.setup(outPin2, GPIO.OUT)
@@ -450,3 +451,5 @@ while True:
         StateNMCTimed
     if state == 4:
         StateNMCRapid
+
+    time.sleep(0.001)

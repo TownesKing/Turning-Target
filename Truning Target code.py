@@ -2,6 +2,8 @@ import time
 import RPi.GPIO as GPIO
 import vlc as vlc
 
+#TODO Finish Skip function, bounce detetion done
+
 FileDirectory = "C/Desktop/Audio/files" #make sure to update
 
 # Audio file names, make sure each sarts with the proper length of pause between commands
@@ -41,6 +43,8 @@ PinNMC = 5
 PinYes = 6
 PinNo = 7
 
+skiped = 0
+
 clockOut = 10
 
 outPin1 = 14
@@ -77,6 +81,8 @@ GPIO.setup(inPin5, GPIO.IN)
 #  3       | NMC Timed
 #  4       | NMC Rapid
 
+#is true if skip button just hit, turn back to false after used.
+skip = False
 audioPlayed = True
 # O is none, 1 is move onto next, 2 is Alibi
 switchSate = 0
@@ -138,6 +144,20 @@ def decode():
     
     return(num)
 
+#makes it so skiping is not done repetedly only once per press of the button
+def skipCheck():
+    global skiped
+    global skip
+    if decode() == PinSkip:
+        if skiped <=0:
+            skip = True
+        skiped = 10
+    else:
+        if skiped > 0:
+            skiped -= 1
+        
+
+
 #Reads the input pins and retunrs a number based on what is input, this should only be used for complex fuctions, try to use decode more.
 def enterprete():
     num = decode()
@@ -164,7 +184,10 @@ def audioUpdate(num):
         Media_Player.stop()
         
 #3 Minute prep period
-def State3MinutePrep(state, switchSate, audioPlayed):
+def State3MinutePrep():
+    global state
+    global switchSate
+    global audioPlayed
     if audioPlayed == True & switchSate == 0:
         play("3MinPrep")
         switchSate = 1

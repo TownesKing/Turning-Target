@@ -188,6 +188,13 @@ def State3MinutePrep():
     global state
     global switchSate
     global audioPlayed
+    global skip
+
+    if skip == True:
+        audioPlayed = True
+        skip = False
+        audioUpdate(2)
+    
     if audioPlayed == True & switchSate == 0:
         play("3MinPrep")
         switchSate = 1
@@ -216,6 +223,15 @@ def StateNMCSlow():
     global state
     global switchSate
     global audioPlayed
+    global skip
+
+    if skip == True:
+        skip = False
+        audioPlayed = True
+        audioUpdate(2)
+        if switchSate == 1:
+            switchSate = 2
+
     if switchSate == 2:
         if decode() == PinSkip:
             audioUpdate(2)
@@ -257,6 +273,26 @@ def StateNMCTimed():
     global switchSate
     global audioPlayed
     global Alibi
+    global skip
+
+    if skip == True:
+        skip = False
+        audioPlayed = True
+        audioUpdate(2)
+        if switchSate == 1:
+            switchSate = 2
+        if switchSate == 4:
+            switchSate = 5
+        if switchSate == 6:
+            switchSate = 8
+        if switchSate == 10:
+            switchSate = 11
+        if switchSate == 13:
+            switchSate = 14
+        if switchSate == 18:
+            switchSate = 0
+            state = 4
+
     if audioPlayed == True & switchSate == 0:
             play("NMCTimedPrepToReady") #From anouncement to asking if ready
             switchSate = 1
@@ -364,6 +400,25 @@ def StateNMCRapid():
     global switchSate
     global audioPlayed
     global Alibi
+
+    if skip == True:
+        skip = False
+        audioPlayed = True
+        audioUpdate(2)
+        if switchSate == 1:
+            switchSate = 2
+        if switchSate == 4:
+            switchSate = 5
+        if switchSate == 6:
+            switchSate = 8
+        if switchSate == 10:
+            switchSate = 11
+        if switchSate == 13:
+            switchSate = 14
+        if switchSate == 18:
+            switchSate = 0
+            state = 4
+
     if audioPlayed == True & switchSate == 0:
             play("NMCRapidPrepToReady") #From anouncement to asking if ready
             switchSate = 1

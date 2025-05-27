@@ -1,4 +1,4 @@
-Update File Directory in top of the script on an install to make sure the adio files are located correctly and ensure that all the audio file names listed are present.
+Update File Directory in top of the script on an install to make sure the audio files are located correctly and ensure that all the audio file names listed are present.
 
 Update the pin numbers if other pins are used for
 
